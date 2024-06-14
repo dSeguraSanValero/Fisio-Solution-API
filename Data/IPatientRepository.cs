@@ -9,5 +9,6 @@ public interface IPatientRepository
     Patient GetPatient(string dni);
     public Dictionary<int, Patient> GetPatients(string? dni = null, bool? insurance = null);
     public void RemovePatient(Patient patient);
+    public void UpdatePatientDetails(Patient patient);
 
 }

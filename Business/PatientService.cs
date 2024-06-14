@@ -32,40 +32,17 @@ public class PatientService : IPatientService
 
     public void DeletePatient(Patient patient)
     {
-        try
-        {
-            _repository.RemovePatient(patient);
-            _repository.SaveChanges();
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al borrar el usuario", e);
-        }
+        _repository.RemovePatient(patient);
     }
 
-    public void UpdatePatientData(Patient patient, string newName, string newPassword, decimal newWeight, decimal newHeight, bool newInsurance)
+    public void UpdatePatient(Patient patient, string password, decimal weight, decimal height, bool insurance)
     {
-        try
-        {
-            if (patient != null)
-            {
-                patient.Name = newName;
-                patient.Password = newPassword;
-                patient.Weight = newWeight;
-                patient.Height = newHeight;
-                patient.Insurance = newInsurance;
+        patient.Password = password;
+        patient.Insurance = insurance;
+        patient.Weight = weight;
+        patient.Height = height;
 
-                _repository.SaveChanges();
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(patient), "El paciente proporcionado es nulo.");
-            }
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al actualizar los datos del paciente.", e);
-        }
+        _repository.UpdatePatientDetails(patient);
     }
 
     public Dictionary<int, Patient> GetPatients(string? dni = null, bool? insurance = null)

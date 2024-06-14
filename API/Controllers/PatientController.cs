@@ -90,4 +90,63 @@ public class PatientController : ControllerBase
         }
     }
 
+
+    [HttpDelete("{patientId}")]
+    public IActionResult DeletePatientById(int patientId)
+    {
+        try
+        {
+            var patients = _patientService.GetPatients(null, null);
+            var patient = patients.FirstOrDefault(p => p.Value.PatientId == patientId).Value;
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            _patientService.DeletePatient(patient);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogInformation(ex.Message);
+            return NotFound();
+        }
+    }
+
+
+    [HttpPut("{patientId}")]
+    public IActionResult UpdatePatient(int patientId, [FromBody] UpdatePatientDTO patientDTO)
+    {
+        try
+        {
+            var patients = _patientService.GetPatients(null, null);
+            var patient = patients.FirstOrDefault(p => p.Value.PatientId == patientId).Value;
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            _patientService.UpdatePatient(patient, 
+                password: patientDTO.Password,
+                weight: patientDTO.Weight,
+                height: patientDTO.Height,
+                insurance: patientDTO.Insurance
+            );
+
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogInformation(ex.Message);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar el paciente.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
+        }
+    }
+
 }

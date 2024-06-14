@@ -61,11 +61,13 @@ public class PatientRepository : IPatientRepository
         return query.ToDictionary(p => p.PatientId, p => p);
     }
 
+
     public void AddPatient(Patient patient)
     {
         _context.Patients.Add(patient);
         _context.SaveChanges();
     }
+
 
     public Patient GetPatient(string dni)
     {
@@ -95,6 +97,13 @@ public class PatientRepository : IPatientRepository
 
     public void RemovePatient(Patient patient)
     {
-        _patients.Remove(patient.PatientId.ToString());
+        _context.Patients.Remove(patient);
+        _context.SaveChanges();
+    }
+
+    public void UpdatePatientDetails(Patient patient)
+    {
+        _context.Patients.Update(patient);
+        _context.SaveChanges();
     }
 }
