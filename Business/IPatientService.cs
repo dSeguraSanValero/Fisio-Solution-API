@@ -11,4 +11,5 @@ public interface IPatientService
     public void UpdatePatientTreatments(string dni, List<Treatment> treatments);
     public void DeletePatient(Patient patient);
     public void UpdatePatientData(Patient patient, string newName, string newPassword, decimal newWeight, decimal newHeight, bool newInsurance);
+    public Dictionary<int, Patient> GetPatients();
 }

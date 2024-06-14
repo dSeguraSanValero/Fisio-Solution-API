@@ -148,5 +148,10 @@ public class PatientService : IPatientService
         }
     }
 
+    public Dictionary<int, Patient> GetPatients()
+    {
+        var allPatients = _repository.GetAllPatients();
+        return allPatients;
+    }
 
 }

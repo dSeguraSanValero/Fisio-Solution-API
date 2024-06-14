@@ -13,31 +13,47 @@ public class PatientController : ControllerBase
 {
     private readonly MigrationDbContext _context;
 
+    private readonly ILogger<PatientController> _logger;
 
-    public PatientController(MigrationDbContext context)
+    private readonly IPatientService _patientService;
+
+    public PatientController(ILogger<PatientController> logger, IPatientService patientService, MigrationDbContext context)
     {
+        _logger = logger;
+        _patientService = patientService;
         _context = context;
     }
+
+
+
+    [HttpGet(Name = "GetAllPatients")]
+    public ActionResult<Dictionary<string, Patient>> SearchPatient(string? Dni, bool? insurance)
+    {
+        var patientsDictionary = _patientService.GetPatients();
+        var query = patientsDictionary.AsQueryable();
+
+        if (insurance.HasValue)
+        {
+            query = query.Where(kvp => kvp.Value.Insurance == insurance.Value);
+        }
+
+        var patients = query.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        if (patients.Count == 0)
+        {
+            return NotFound();
+        }
+
+        return Ok(patients);
+    }
+
+
+
 
     [HttpGet("{PatientId}")]
     public IActionResult GetPatient(int PatientId)
     {
         var patient = _context.Patients.FirstOrDefault(p => p.PatientId == PatientId);
-
-        if (patient == null)
-        {
-            return NotFound();
-        }
-
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:5173");
-        return Ok(patient);
-    }
-
-
-    [HttpGet]
-    public IActionResult GetPatientByDni ([FromQuery] string dni)
-    {
-        var patient = _context.Patients.FirstOrDefault(p => p.Dni == dni);
 
         if (patient == null)
         {

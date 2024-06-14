@@ -7,8 +7,14 @@ namespace FisioSolution.Data;
 
 public class PatientRepository : IPatientRepository
 {
+    private readonly MigrationDbContext _context;
     private Dictionary<string, Patient> _patients = new Dictionary<string, Patient>();
     private readonly string _filePath = "patients.json";
+
+    public PatientRepository(MigrationDbContext context)
+    {
+        _context = context;
+    }
 
     public PatientRepository()
     {
@@ -54,9 +60,9 @@ public class PatientRepository : IPatientRepository
         return null;
     }
 
-    public Dictionary<string, Patient> GetAllPatients()
+    public Dictionary<int, Patient> GetAllPatients()
     {
-        return new Dictionary<string, Patient>(_patients);
+        return _context.Patients.ToDictionary(p => p.PatientId, p => p);
     }
 
     public void SaveChanges()
