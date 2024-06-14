@@ -14,101 +14,21 @@ public class PatientService : IPatientService
 
     public void RegisterPatient(string name, string dni, string password, DateTime birthDate, decimal weight, decimal height, bool insurance)
     {
-        try 
+
+        var newPatient = new Patient
         {
-            Patient patient = new(name, dni, password, birthDate, weight, height, insurance);
-            _repository.AddPatient(patient);
-            _repository.SaveChanges();
-        } 
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al registrar el usuario", e);
-        }
+            Name = name,
+            Dni = dni,
+            Password = password,
+            BirthDate = birthDate.Date,
+            Weight = weight,
+            Height = height,
+            Insurance = insurance
+        };
+
+        _repository.AddPatient(newPatient);
     }
 
-    public bool CheckPatientExist(string dni)
-    {
-        try
-        {
-            foreach (var patient in _repository.GetAllPatients().Values)
-            {
-                if (patient.Dni.Equals(dni))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al comprobar el usuario", e);
-        }
-    }
-
-    public bool CheckLoginPatient(string dni, string pasword)
-    {
-        try
-        {
-            foreach (var patient in _repository.GetAllPatients().Values)
-            {
-                if (patient.Dni.Equals(dni, StringComparison.OrdinalIgnoreCase) &&
-                    patient.Password.Equals(pasword))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al comprobar el usuario", e);
-        }
-    }
-
-    public Patient GetPatientByDni(string dni)
-    {
-        try
-        {
-            foreach (var patient in _repository.GetAllPatients().Values)
-            {
-                if (patient.Dni.Equals(dni))
-                {
-                    return patient;
-                }
-            }
-
-            return null;
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al obtener el usuario", e);
-        }
-    }
-
-    public void UpdatePatientTreatments(string dni, List<Treatment> treatments)
-    {
-        try
-        {
-            Patient patient = GetPatientByDni(dni);
-
-            if (patient != null)
-            {
-
-                patient.MyTreatments = treatments;
-                _repository.SaveChanges();
-            }
-            else
-            {
-                throw new Exception("No se encontró ningún paciente con el DNI proporcionado.");
-            }
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al actualizar los tratamientos del paciente.", e);
-        }
-    }
 
     public void DeletePatient(Patient patient)
     {
@@ -148,10 +68,9 @@ public class PatientService : IPatientService
         }
     }
 
-    public Dictionary<int, Patient> GetPatients()
+    public Dictionary<int, Patient> GetPatients(string? dni = null, bool? insurance = null)
     {
-        var allPatients = _repository.GetAllPatients();
-        return allPatients;
+        return _repository.GetPatients(dni, insurance);
     }
 
 }

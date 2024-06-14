@@ -27,17 +27,9 @@ public class PatientController : ControllerBase
 
 
     [HttpGet(Name = "GetAllPatients")]
-    public ActionResult<Dictionary<string, Patient>> SearchPatient(string? Dni, bool? insurance)
+    public ActionResult<Dictionary<int, Patient>> SearchPatient(string? dni, bool? insurance)
     {
-        var patientsDictionary = _patientService.GetPatients();
-        var query = patientsDictionary.AsQueryable();
-
-        if (insurance.HasValue)
-        {
-            query = query.Where(kvp => kvp.Value.Insurance == insurance.Value);
-        }
-
-        var patients = query.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        var patients = _patientService.GetPatients(dni, insurance);
 
         if (patients.Count == 0)
         {
@@ -48,47 +40,54 @@ public class PatientController : ControllerBase
     }
 
 
-
-
-    [HttpGet("{PatientId}")]
+    [HttpGet("{PatientId}", Name = "GetPatient")]
     public IActionResult GetPatient(int PatientId)
     {
-        var patient = _context.Patients.FirstOrDefault(p => p.PatientId == PatientId);
-
-        if (patient == null)
+        try
         {
-            return NotFound();
-        }
+            var patients = _patientService.GetPatients(null, null);
+            var patient = patients.FirstOrDefault(p => p.Value.PatientId == PatientId).Value;
 
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:5173");
-        return Ok(patient);
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(patient);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound("No se encontró el paciente con número de registro " + PatientId);
+        }
     }
 
 
     [HttpPost]
-    public IActionResult CreatePatient(Patient patient)
+    public IActionResult RegisterPatient([FromBody] RegisterPatientDTO patientDTO)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         try
         {
-            _context.Patients.Add(patient);
-            _context.SaveChanges();
-            
-            return CreatedAtAction(nameof(GetPatient), new { patientId = patient.PatientId }, patient);
+            _patientService.RegisterPatient(
+                name: patientDTO.Name,
+                dni: patientDTO.Dni,
+                password: patientDTO.Password,
+                birthDate: patientDTO.BirthDate,
+                weight: patientDTO.Weight,
+                height: patientDTO.Height,
+                insurance: patientDTO.Insurance
+            );
+
+            return CreatedAtAction(nameof(SearchPatient), new { dni = patientDTO.Dni }, patientDTO);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            return BadRequest(ex.Message);
         }
-    }
-
-    [HttpOptions]
-    public IActionResult Options()
-    {
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:5173");
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Methods", "POST");
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
-
-        return Ok();
     }
 
 }

@@ -42,10 +42,29 @@ public class PatientRepository : IPatientRepository
         }
     }
 
+
+
+    public Dictionary<int, Patient> GetPatients(string? dni = null, bool? insurance = null)
+    {
+        var query = _context.Patients.AsQueryable();
+
+        if (!string.IsNullOrEmpty(dni))
+        {
+            query = query.Where(p => p.Dni == dni);
+        }
+
+        if (insurance.HasValue)
+        {
+            query = query.Where(p => p.Insurance == insurance.Value);
+        }
+
+        return query.ToDictionary(p => p.PatientId, p => p);
+    }
+
     public void AddPatient(Patient patient)
     {
-        _patients[patient.PatientId.ToString()] = patient;
-        SaveChanges();
+        _context.Patients.Add(patient);
+        _context.SaveChanges();
     }
 
     public Patient GetPatient(string dni)
@@ -58,11 +77,6 @@ public class PatientRepository : IPatientRepository
             }
         }
         return null;
-    }
-
-    public Dictionary<int, Patient> GetAllPatients()
-    {
-        return _context.Patients.ToDictionary(p => p.PatientId, p => p);
     }
 
     public void SaveChanges()
