@@ -34,7 +34,7 @@ public class PhysioRepository : IPhysioRepository
     }
 
 
-    public Dictionary<int, Physio> GetAllPhysios(int? registrationNumber, bool? availeable, decimal? price)
+    public IEnumerable<Physio> GetAllPhysios(int? registrationNumber, bool? availeable, decimal? price, string? sortBy)
     {
         var query = _context.Physios.AsQueryable();
 
@@ -53,8 +53,23 @@ public class PhysioRepository : IPhysioRepository
             query = query.Where(p => p.Price == price.Value);
         }
 
-        return query.ToDictionary(p => p.PhysioId, p => p);
+        if (!string.IsNullOrEmpty(sortBy))
+        {
+            switch (sortBy.ToLower())
+            {
+                case "price":
+                    query = query.OrderBy(p => p.Price);
+                    break;
+                    
+                default:
+                    query = query.OrderBy(p => p.PhysioId);
+                    break;
+            }
+        }
+
+        return query.ToList(); 
     }
+
 
 }
 

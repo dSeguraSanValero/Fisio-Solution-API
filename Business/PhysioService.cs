@@ -49,9 +49,9 @@ public class PhysioService : IPhysioService
         _repository.UpdatePhysioDetails(physio);
     }
 
-
-    public Dictionary<int, Physio> GetPhysios(int? registrationNumber, bool? availeable, decimal? price)
+    
+    public IEnumerable<Physio> GetPhysios(int? registrationNumber, bool? availeable, decimal? price, string? sortBy)
     {
-        return _repository.GetAllPhysios(registrationNumber, availeable, price);
+        return _repository.GetAllPhysios(registrationNumber, availeable, price, sortBy);
     }
-}
+    }

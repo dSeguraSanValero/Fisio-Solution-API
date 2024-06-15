@@ -21,11 +21,11 @@ public class PhysioController : ControllerBase
     }
 
     [HttpGet(Name = "GetAllPhysios")]
-    public ActionResult<Dictionary<int, Physio>> SearchPhysio(int? registrationNumber, bool? availeable, decimal? price)
+    public ActionResult<IEnumerable<Physio>> SearchPhysio(int? registrationNumber, bool? availeable, decimal? price, string? sortBy)
     {
-        var physios = _physioService.GetPhysios(registrationNumber, availeable, price);
+        var physios = _physioService.GetPhysios(registrationNumber, availeable, price, sortBy);
 
-        if (physios.Count == 0)
+        if (physios.ToList().Count == 0)
         {
             return NotFound();
         }
@@ -35,12 +35,12 @@ public class PhysioController : ControllerBase
 
 
     [HttpGet("{PhysioId}", Name = "GetPhysio")]
-    public IActionResult GetPhysio(int PhysioId)
+    public IActionResult GetPhysio(int physioId)
     {
         try
         {
-            var physios = _physioService.GetPhysios(null, null, null);
-            var physio = physios.FirstOrDefault(p => p.Value.PhysioId == PhysioId).Value;
+            var physios = _physioService.GetPhysios(null, null, null, null);
+            var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
 
             if (physio == null)
             {
@@ -51,7 +51,7 @@ public class PhysioController : ControllerBase
         }
         catch (KeyNotFoundException)
         {
-            return NotFound("No se encontró el fisioterapeuta con número de registro " + PhysioId);
+            return NotFound("No se encontró el fisioterapeuta con número de registro " + physioId);
         }
     }
 
@@ -90,8 +90,8 @@ public class PhysioController : ControllerBase
     {
         try
         {
-            var physios = _physioService.GetPhysios(null, null, null);
-            var physio = physios.FirstOrDefault(p => p.Value.PhysioId == physioId).Value;
+            var physios = _physioService.GetPhysios(null, null, null, null);
+            var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
 
             if (physio == null)
             {
@@ -119,8 +119,8 @@ public class PhysioController : ControllerBase
     {
         try
         {
-            var physios = _physioService.GetPhysios(null, null, null);
-            var physio = physios.FirstOrDefault(p => p.Value.PhysioId == physioId).Value;
+            var physios = _physioService.GetPhysios(null, null, null, null);
+            var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
 
             if (physio == null)
             {
