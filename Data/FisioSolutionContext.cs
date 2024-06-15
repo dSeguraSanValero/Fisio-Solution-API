@@ -29,8 +29,12 @@ namespace FisioSolution.Data
                     new Patient { PatientId = 2, Name = "Pedro Martínez", Dni = "730203040", Password = "pass123", BirthDate = new DateTime(1993, 5, 14), Weight = 70.5m, Height = 172.0m, Insurance = true }
                 );
 
+                modelBuilder.Entity<Treatment>()
+                    .Property(p => p.TreatmentDate)
+                    .HasColumnType("date");
+
                 modelBuilder.Entity<Treatment>().HasData(
-                    new Treatment { TreatmentId = 1, PhysioId = 1, PatientId = 1, TreatmentCause = "Dolor de espalda", TreatmentDate = DateTime.Now, MoreSessionsNeeded = true }
+                    new Treatment { TreatmentId = 1, PhysioId = 1, PatientId = 1, TreatmentCause = "Dolor de espalda", TreatmentDate = new DateTime(2024, 3, 10), MoreSessionsNeeded = true }
                 );
         }
 

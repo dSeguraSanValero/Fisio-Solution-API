@@ -17,13 +17,10 @@ public class Patient
    public decimal Weight { get; set; }
    public decimal Height { get; set; }
    public bool Insurance { get; set; }
-   public List<Treatment> MyTreatments { get; set; }
-   public List<Physio> AssignedPhysios { get; set; } = new List<Physio>();
    public static int PatientIdSeed { get; set; }
 
-   public Patient()
-   {
-      MyTreatments = new List<Treatment>();
+   public Patient() {
+      
    }
 
    public Patient(string name, string dni, string password, DateTime birthDate, decimal weight, decimal height, bool insurance) 
@@ -36,7 +33,5 @@ public class Patient
       Weight = weight;
       Height = height;
       Insurance = insurance;
-      MyTreatments = new List<Treatment>();
-      AssignedPhysios = new List<Physio>();
    }
 }

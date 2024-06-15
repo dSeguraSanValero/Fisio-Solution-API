@@ -171,5 +171,4 @@ public class PatientController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
         }
     }
-
 }

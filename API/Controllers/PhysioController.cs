@@ -9,16 +9,14 @@ namespace FisioSolution.API.Controllers;
 [Route("[controller]")]
 public class PhysioController : ControllerBase
 {
-    private readonly FisioSolutionContext _context;
 
     private readonly ILogger<PhysioController> _logger;
 
     private readonly IPhysioService _physioService;
 
-    public PhysioController(FisioSolutionContext context, ILogger<PhysioController> logger, IPhysioService physioService)
+    public PhysioController(ILogger<PhysioController> logger, IPhysioService physioService)
     {
         _logger = logger;
-        _context = context;
         _physioService = physioService;
     }
 

@@ -5,7 +5,6 @@ namespace FisioSolution.Data;
 
 public class TreatmentRepository : ITreatmentRepository
 {
-    private Dictionary<int, Treatment> _treatments = new Dictionary<int, Treatment>();
     private readonly FisioSolutionContext _context;
     public TreatmentRepository(FisioSolutionContext context)
     {

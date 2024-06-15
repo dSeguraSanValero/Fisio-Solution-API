@@ -6,7 +6,7 @@ public class UpdatePatientDTO
 {
     [Required]
     [StringLength(100, MinimumLength = 6, ErrorMessage = "La contraseña debe tener entre 6 y 100 caracteres")]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 
     [Required]
     [Range(0.01, double.MaxValue, ErrorMessage = "El peso debe ser mayor que 0")]

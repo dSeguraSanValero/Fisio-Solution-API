@@ -175,7 +175,7 @@ namespace FisioSolution.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("TreatmentDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.HasKey("TreatmentId");
 
@@ -193,7 +193,7 @@ namespace FisioSolution.Data.Migrations
                             PatientId = 1,
                             PhysioId = 1,
                             TreatmentCause = "Dolor de espalda",
-                            TreatmentDate = new DateTime(2024, 6, 14, 11, 50, 17, 603, DateTimeKind.Local).AddTicks(5621)
+                            TreatmentDate = new DateTime(2024, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 

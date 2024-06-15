@@ -13,10 +13,6 @@ public class PhysioService : IPhysioService
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public Dictionary<int, Physio> GetPhysios(int? registrationNumber, bool? availeable, decimal? price)
-    {
-        return _repository.GetAllPhysios(registrationNumber, availeable, price);
-    }
 
     public void RegisterPhysio(string name, int registrationNumber, string password, bool availeable, TimeSpan openingTime, TimeSpan closingTime, decimal price)
     {
@@ -36,20 +32,6 @@ public class PhysioService : IPhysioService
     }
 
 
-    public void UpdatePhysioTreatments(Physio physio, List<Treatment> treatments)
-    {
-        try
-        {
-            physio.MyTreatments = treatments;
-            _repository.SaveChanges();
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al actualizar los tratamientos del fisioterapeuta.", e);
-        }
-    }
-
-
     public void DeletePhysio(Physio physio)
     {
         _repository.RemovePhysio(physio);
@@ -65,5 +47,11 @@ public class PhysioService : IPhysioService
         physio.Price = price;
 
         _repository.UpdatePhysioDetails(physio);
+    }
+
+
+    public Dictionary<int, Physio> GetPhysios(int? registrationNumber, bool? availeable, decimal? price)
+    {
+        return _repository.GetAllPhysios(registrationNumber, availeable, price);
     }
 }

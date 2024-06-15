@@ -18,7 +18,7 @@ services:
             - fisiosolution2.0
         image: apidb-dockerdemo:1.2
         ports:
-            - 7237:80 
+            - 7238:80 
         build:
           context: .
           dockerfile: API/Dockerfile

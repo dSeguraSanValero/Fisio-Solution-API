@@ -20,6 +20,7 @@ public class TreatmentController : ControllerBase
         _treatmentService = treatmentService;
     }
 
+
     [HttpGet(Name = "GetAllTreatments")]
     public ActionResult<Dictionary<int, Treatment>> SearchTreatment(int? physioId, int? patientId)
     {
@@ -30,7 +31,20 @@ public class TreatmentController : ControllerBase
             return NotFound();
         }
 
-        return Ok(treatments);
+        var transformedTreatments = treatments.ToDictionary(
+            kvp => kvp.Key,
+            kvp => new
+            {
+                kvp.Value.TreatmentId,
+                kvp.Value.PatientId,
+                kvp.Value.PhysioId,
+                kvp.Value.TreatmentCause,
+                TreatmentDate = kvp.Value.TreatmentDate.ToString("yyyy-MM-dd"),
+                kvp.Value.MoreSessionsNeeded
+            }
+        );
+
+        return Ok(transformedTreatments);
     }
 
 
@@ -46,6 +60,16 @@ public class TreatmentController : ControllerBase
             {
                 return NotFound();
             }
+
+            var transformedTreatment = new
+            {
+                treatment.TreatmentId,
+                treatment.PatientId,
+                treatment.PhysioId,
+                treatment.TreatmentCause,
+                TreatmentDate = treatment.TreatmentDate.ToString("yyyy-MM-dd"),
+                treatment.MoreSessionsNeeded
+            };    
 
             return Ok(treatment);
         }

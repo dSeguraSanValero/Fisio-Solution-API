@@ -14,10 +14,6 @@ public class TreatmentService : ITreatmentService
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public Dictionary<int, Treatment> GetTreatments(int? physioId, int? patientId)
-    {
-        return _repository.GetAllTreatments(physioId, patientId);
-    }
 
     public void RegisterTreatment(int physioId, int patientId, string treatmentCause, DateTime treatmentDate, bool moreSessionsNeeded)
     {
@@ -33,8 +29,15 @@ public class TreatmentService : ITreatmentService
         _repository.AddTreatment(newTreatment);
     }
 
+
     public void DeleteTreatment(Treatment treatment)
     {
         _repository.RemoveTreatment(treatment);
+    }
+
+
+    public Dictionary<int, Treatment> GetTreatments(int? physioId, int? patientId)
+    {
+        return _repository.GetAllTreatments(physioId, patientId);
     }
 }

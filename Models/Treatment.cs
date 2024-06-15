@@ -12,8 +12,6 @@ public class Treatment
       set => treatmentDate = value.Date;
    }
    public static int TreatmentIdSeed { get; set; }
-   public Patient Patient { get; set; }
-   public Physio Physio { get; set; }
    public bool MoreSessionsNeeded { get; set; }
 
    public Treatment() {

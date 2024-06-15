@@ -12,7 +12,7 @@ namespace FisioSolution.Models
     
         [Required]
         [StringLength(100, ErrorMessage = "El motivo de tratamiento debe tener menos de 100 caracteres")]
-        public string TreatmentCause { get; set; }
+        public string? TreatmentCause { get; set; }
 
         private DateTime treatmentDate;
 

@@ -13,11 +13,11 @@ namespace FisioSolution.Models
 
         [Required]
         [StringLength(10, MinimumLength = 8, ErrorMessage = "El DNI debe tener entre 8 y 10 dígitos")]
-        public string Dni { get; set; }
+        public string? Dni { get; set; }
 
         [Required]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "La contraseña debe tener entre 5 y 100 caracteres")]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         private DateTime birthDate;
 
