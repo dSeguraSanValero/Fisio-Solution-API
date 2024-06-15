@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FisioSolution.Data.Migrations
 {
-    [DbContext(typeof(MigrationDbContext))]
+    [DbContext(typeof(FisioSolutionContext))]
     [Migration("20240510181732_InitialCreate")]
     partial class InitialCreate
     {

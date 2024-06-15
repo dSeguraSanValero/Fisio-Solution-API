@@ -7,9 +7,9 @@ public class PhysioRepository : IPhysioRepository
 {
     private Dictionary<string, Physio> _physios = new Dictionary<string, Physio>();
     private readonly string _filePath = "physios.json";
-    private readonly MigrationDbContext _context;
+    private readonly FisioSolutionContext _context;
 
-    public PhysioRepository(MigrationDbContext context)
+    public PhysioRepository(FisioSolutionContext context)
     {
         _context = context;
     }    

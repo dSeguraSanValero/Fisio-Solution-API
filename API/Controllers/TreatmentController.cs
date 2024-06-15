@@ -9,9 +9,9 @@ namespace FisioSolution.API.Controllers;
 [Route("[controller]")]
 public class TreatmentController : ControllerBase
 {
-    private readonly MigrationDbContext _context;
+    private readonly FisioSolutionContext _context;
 
-    public TreatmentController(MigrationDbContext context)
+    public TreatmentController(FisioSolutionContext context)
     {
         _context = context;
     }

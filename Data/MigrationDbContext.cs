@@ -4,9 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FisioSolution.Data
 {
-    public class MigrationDbContext : DbContext
+    public class FisioSolutionContext : DbContext
     {
-        public MigrationDbContext(DbContextOptions<MigrationDbContext> options)
+        public FisioSolutionContext(DbContextOptions<FisioSolutionContext> options)
             : base(options)
         {
 

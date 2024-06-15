@@ -13,7 +13,7 @@ builder.Services.AddScoped<IPatientService, PatientService>();
 
 var connectionString = builder.Configuration.GetConnectionString("ServerDB_localhost");
 
-builder.Services.AddDbContext<MigrationDbContext>(options =>
+builder.Services.AddDbContext<FisioSolutionContext>(options =>
     options.UseSqlServer(connectionString)
 );
 
@@ -29,7 +29,7 @@ if (connectionString == "ServerDB_azure")
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
-        var context = services.GetRequiredService<MigrationDbContext>();
+        var context = services.GetRequiredService<FisioSolutionContext>();
         context.Database.Migrate();
     }
 }

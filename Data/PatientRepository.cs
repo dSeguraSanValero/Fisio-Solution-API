@@ -7,10 +7,10 @@ namespace FisioSolution.Data;
 
 public class PatientRepository : IPatientRepository
 {
-    private readonly MigrationDbContext _context;
+    private readonly FisioSolutionContext _context;
     private Dictionary<string, Patient> _patients = new Dictionary<string, Patient>();
 
-    public PatientRepository(MigrationDbContext context)
+    public PatientRepository(FisioSolutionContext context)
     {
         _context = context;
     }
