@@ -6,7 +6,14 @@ public class Patient
    public string? Name { get; set; }
    public string? Dni { get; set; }
    public string? Password { get; set; }
-   public DateTime BirthDate { get; set; }
+
+   private DateTime birthDate;
+   public DateTime BirthDate
+   {
+      get => birthDate.Date;
+      set => birthDate = value.Date;
+   }
+
    public decimal Weight { get; set; }
    public decimal Height { get; set; }
    public bool Insurance { get; set; }
@@ -25,12 +32,11 @@ public class Patient
       Name = name;
       Dni = dni;
       Password = password;
-      BirthDate = birthDate;
+      BirthDate = birthDate.Date;
       Weight = weight;
       Height = height;
       Insurance = insurance;
       MyTreatments = new List<Treatment>();
       AssignedPhysios = new List<Physio>();
    }
-
 }

@@ -20,6 +20,10 @@ namespace FisioSolution.Data
                     new Physio { PhysioId = 3, Name = "Jaime", RegistrationNumber = 1600, Password = "cocacola27", Availeable = true, OpeningTime = TimeSpan.FromHours(9), ClosingTime = TimeSpan.FromHours(17), Price = 60.00m }
                 );
 
+                modelBuilder.Entity<Patient>()
+                    .Property(p => p.BirthDate)
+                    .HasColumnType("date");
+
                 modelBuilder.Entity<Patient>().HasData(
                     new Patient { PatientId = 1, Name = "John Doe", Dni = "730151515", Password = "1234", BirthDate = new DateTime(1980, 5, 10), Weight = 80.5m, Height = 180.0m, Insurance = true },
                     new Patient { PatientId = 2, Name = "Pedro Martínez", Dni = "730203040", Password = "pass123", BirthDate = new DateTime(1993, 5, 14), Weight = 70.5m, Height = 172.0m, Insurance = true }

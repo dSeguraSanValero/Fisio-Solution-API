@@ -4,7 +4,6 @@ using FisioSolution.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,10 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FisioSolution.Data.Migrations
 {
     [DbContext(typeof(FisioSolutionContext))]
-    [Migration("20240510181732_InitialCreate")]
-    partial class InitialCreate
+    partial class FisioSolutionContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +31,7 @@ namespace FisioSolution.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PatientId"), 1L, 1);
 
                     b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<string>("Dni")
                         .HasColumnType("nvarchar(max)");
@@ -195,7 +193,7 @@ namespace FisioSolution.Data.Migrations
                             PatientId = 1,
                             PhysioId = 1,
                             TreatmentCause = "Dolor de espalda",
-                            TreatmentDate = new DateTime(2024, 5, 10, 20, 17, 31, 716, DateTimeKind.Local).AddTicks(6383)
+                            TreatmentDate = new DateTime(2024, 6, 14, 11, 50, 17, 603, DateTimeKind.Local).AddTicks(5621)
                         });
                 });
 

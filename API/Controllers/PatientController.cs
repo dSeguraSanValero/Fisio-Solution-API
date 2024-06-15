@@ -22,7 +22,7 @@ public class PatientController : ControllerBase
 
 
     [HttpGet(Name = "GetAllPatients")]
-    public ActionResult<Dictionary<int, Patient>> SearchPatient(string? dni, bool? insurance)
+    public ActionResult<Dictionary<int, object>> SearchPatient(string? dni, bool? insurance)
     {
         var patients = _patientService.GetPatients(dni, insurance);
 
@@ -31,8 +31,24 @@ public class PatientController : ControllerBase
             return NotFound();
         }
 
-        return Ok(patients);
+        var transformedPatients = patients.ToDictionary(
+            kvp => kvp.Key,
+            kvp => new
+            {
+                kvp.Value.PatientId,
+                kvp.Value.Name,
+                kvp.Value.Dni,
+                kvp.Value.Password,
+                BirthDate = kvp.Value.BirthDate.ToString("yyyy-MM-dd"),
+                kvp.Value.Weight,
+                kvp.Value.Height,
+                kvp.Value.Insurance
+            }
+        );
+
+        return Ok(transformedPatients);
     }
+
 
 
     [HttpGet("{PatientId}", Name = "GetPatient")]
@@ -47,6 +63,18 @@ public class PatientController : ControllerBase
             {
                 return NotFound();
             }
+
+            var transformedPatient = new
+            {
+                patient.PatientId,
+                patient.Name,
+                patient.Dni,
+                patient.Password,
+                BirthDate = patient.BirthDate.ToString("yyyy-MM-dd"),
+                patient.Weight,
+                patient.Height,
+                patient.Insurance
+            };           
 
             return Ok(patient);
         }

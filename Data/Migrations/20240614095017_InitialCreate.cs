@@ -18,7 +18,7 @@ namespace FisioSolution.Data.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Dni = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "date", nullable: false),
                     Weight = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Height = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Insurance = table.Column<bool>(type: "bit", nullable: false)
@@ -104,7 +104,7 @@ namespace FisioSolution.Data.Migrations
             migrationBuilder.InsertData(
                 table: "Treatments",
                 columns: new[] { "TreatmentId", "MoreSessionsNeeded", "PatientId", "PhysioId", "TreatmentCause", "TreatmentDate" },
-                values: new object[] { 1, true, 1, 1, "Dolor de espalda", new DateTime(2024, 5, 10, 20, 17, 31, 716, DateTimeKind.Local).AddTicks(6383) });
+                values: new object[] { 1, true, 1, 1, "Dolor de espalda", new DateTime(2024, 6, 14, 11, 50, 17, 603, DateTimeKind.Local).AddTicks(5621) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Physios_PatientId",

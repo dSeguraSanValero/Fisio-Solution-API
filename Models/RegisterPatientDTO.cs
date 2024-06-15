@@ -18,8 +18,14 @@ namespace FisioSolution.Models
         [StringLength(100, MinimumLength = 5, ErrorMessage = "La contraseña debe tener entre 5 y 100 caracteres")]
         public string Password { get; set; }
 
+        private DateTime birthDate;
+
         [Required]
-        public DateTime BirthDate { get; set; }
+        public DateTime BirthDate
+        {
+            get => birthDate.Date;
+            set => birthDate = value.Date;
+        }
 
         [Required]
         [Range(0.1, double.MaxValue, ErrorMessage = "El peso debe ser mayor que 0")]
