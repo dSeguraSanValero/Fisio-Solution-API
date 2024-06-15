@@ -24,6 +24,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddCors(options =>
+{
+options.AddPolicy("MyAllowedOrigins",
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+
 var app = builder.Build();
 
 if (connectionString == "ServerDB_azure")
@@ -36,9 +49,7 @@ if (connectionString == "ServerDB_azure")
     }
 }
 
-app.UseCors();
-
-
+app.UseCors("MyAllowedOrigins");
 
 app.UseSwagger();
 app.UseSwaggerUI();
