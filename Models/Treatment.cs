@@ -5,7 +5,12 @@ public class Treatment
    public int PhysioId { get; set; }
    public int PatientId { get; set; }
    public string? TreatmentCause { get; set; }
-   public DateTime TreatmentDate { get; set; }
+   private DateTime treatmentDate;
+   public DateTime TreatmentDate
+   {
+      get => treatmentDate.Date;
+      set => treatmentDate = value.Date;
+   }
    public static int TreatmentIdSeed { get; set; }
    public Patient Patient { get; set; }
    public Physio Physio { get; set; }
@@ -21,7 +26,7 @@ public class Treatment
       PhysioId = physioId;
       PatientId = patientId;
       TreatmentCause = treatmentCause;
-      TreatmentDate = treatmentDate;
-      MoreSessionsNeeded = moreSessionsNeeded; 
+      TreatmentDate = treatmentDate.Date;
+      MoreSessionsNeeded = moreSessionsNeeded;
    }
 }

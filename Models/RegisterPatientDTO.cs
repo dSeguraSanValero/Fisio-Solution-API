@@ -8,11 +8,12 @@ namespace FisioSolution.Models
         [StringLength(100, ErrorMessage = "El nombre debe tener menos de 100 caracteres")]
         public string Name { get; set; }
 
+        [Required]
+        public int PatientId { get; set; }
 
         [Required]
-        [StringLength(12, MinimumLength = 3, ErrorMessage = "El DNI debe tener entre 7 y 8 caracteres")]
+        [StringLength(10, MinimumLength = 8, ErrorMessage = "El DNI debe tener entre 8 y 10 dígitos")]
         public string Dni { get; set; }
-
 
         [Required]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "La contraseña debe tener entre 5 y 100 caracteres")]

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using FisioSolution.Data;
 using FisioSolution.Models;
+using FisioSolution.Business;
 
 
 namespace FisioSolution.API.Controllers;
@@ -9,140 +9,105 @@ namespace FisioSolution.API.Controllers;
 [Route("[controller]")]
 public class TreatmentController : ControllerBase
 {
-    private readonly FisioSolutionContext _context;
 
-    public TreatmentController(FisioSolutionContext context)
+    private readonly ILogger<TreatmentController> _logger;
+
+    private readonly ITreatmentService _treatmentService;
+
+    public TreatmentController(ILogger<TreatmentController> logger, ITreatmentService treatmentService)
     {
-        _context = context;
+        _logger = logger;
+        _treatmentService = treatmentService;
     }
 
-    public class TreatmentFilterDto
+    [HttpGet(Name = "GetAllTreatments")]
+    public ActionResult<Dictionary<int, Treatment>> SearchTreatment(int? physioId, int? patientId)
     {
-        public int? PatientId { get; set; }
-        public int? PhysioId { get; set; }
-    }
+        var treatments = _treatmentService.GetTreatments(physioId, patientId);
 
-    [HttpGet("{TreatmentId}")]
-    public IActionResult GetTreatment(int TreatmentId)
-    {
-        var treatment = _context.Treatments.FirstOrDefault(p => p.TreatmentId == TreatmentId);
-
-        if (treatment == null)
+        if (treatments.Count == 0)
         {
             return NotFound();
         }
 
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:5173");
-        return Ok(treatment);
+        return Ok(treatments);
     }
 
 
-
-    [HttpGet]
-    public IActionResult GetTreatmentsByFilter([FromQuery] TreatmentFilterDto filter)
-    {
-        if (filter.PatientId.HasValue)
-        {
-            var treatments = _context.Treatments.Where(t => t.PatientId == filter.PatientId).ToList();
-
-            if (treatments.Count == 0)
-            {
-                return NotFound();
-            }
-
-            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:5173");
-            return Ok(treatments);
-        }
-        else if (filter.PhysioId.HasValue)
-        {
-            var treatments = _context.Treatments.Where(t => t.PhysioId == filter.PhysioId).ToList();
-
-            if (treatments.Count == 0)
-            {
-                return NotFound();
-            }
-
-            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:5173");
-            return Ok(treatments);
-        }
-        else
-        {
-            return BadRequest("Debe especificar al menos un ID de paciente o ID de fisioterapeuta.");
-        }
-    }
-
-
-
-    [HttpOptions]
-    public IActionResult Options()
-    {
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:5173");
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Methods", "POST");
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
-
-        return Ok();
-    }
-
-    [HttpPost]
-    public IActionResult CreateTreatment(ModelTreatment treatmentInput)
+    [HttpGet("{TreatmentId}", Name = "GetTreatment")]
+    public IActionResult GetTreatment(int TreatmentId)
     {
         try
         {
-            if (treatmentInput.PhysioId == 0 || treatmentInput.PatientId == 0)
-            {
-                return BadRequest("Los campos 'PhysioId' y 'PatientId' son obligatorios.");
-            }
+            var treatments = _treatmentService.GetTreatments(null, null);
+            var treatment = treatments.FirstOrDefault(p => p.Value.TreatmentId == TreatmentId).Value;
 
-            var treatment = new Treatment
-            {
-                PhysioId = treatmentInput.PhysioId,
-                PatientId = treatmentInput.PatientId,
-                TreatmentCause = treatmentInput.TreatmentCause,
-                TreatmentDate = treatmentInput.TreatmentDate,
-                MoreSessionsNeeded = treatmentInput.MoreSessionsNeeded
-            };
-
-            _context.Treatments.Add(treatment);
-            _context.SaveChanges();
-            
-            return CreatedAtAction(nameof(GetTreatment), new { physioId = treatment.PhysioId }, treatment);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Error interno del servidor: {ex.Message}");
-        }
-    }
-
-    [HttpDelete("{TreatmentId}")]
-    public IActionResult DeleteTreatment(int TreatmentId)
-    {
-        try
-        {
-            var treatment = _context.Treatments.FirstOrDefault(p => p.TreatmentId == TreatmentId);
             if (treatment == null)
             {
                 return NotFound();
             }
 
-            _context.Treatments.Remove(treatment);
-            _context.SaveChanges();
-            
-            return NoContent(); 
+            return Ok(treatment);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound("No se encontró el tratamiento con id " + TreatmentId);
+        }
+    }
+
+
+    [HttpPost]
+    public IActionResult RegisterTreatment([FromBody] RegisterTreatmentDTO treatmentDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            _treatmentService.RegisterTreatment(
+                physioId: treatmentDTO.PhysioId,
+                patientId: treatmentDTO.PatientId,
+                treatmentCause: treatmentDTO.TreatmentCause,
+                treatmentDate: treatmentDTO.TreatmentDate,
+                moreSessionsNeeded: treatmentDTO.MoreSessionsNeeded
+            );
+
+            return Ok("Tratamiento registrado correctamente");
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            return BadRequest(ex.Message);
         }
     }
 
 
-}
-
-    public class ModelTreatment
+    [HttpDelete("{treatmentId}")]
+    public IActionResult DeleteTreatmentById(int treatmentId)
     {
-        public int PhysioId { get; set; }
-        public int PatientId { get; set; }
-        public string TreatmentCause { get; set; }
-        public DateTime TreatmentDate { get; set; }
-        public bool MoreSessionsNeeded { get; set; }
+        try
+        {
+            var treatments = _treatmentService.GetTreatments(null, null);
+            var treatment = treatments.FirstOrDefault(p => p.Value.TreatmentId == treatmentId).Value;
+
+            if (treatment == null)
+            {
+                return NotFound();
+            }
+
+            _treatmentService.DeleteTreatment(treatment);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogInformation(ex.Message);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al eliminar el tratamiento.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
+        }
     }
+}

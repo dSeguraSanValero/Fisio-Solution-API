@@ -10,6 +10,8 @@ builder.Services.AddScoped<IPhysioRepository, PhysioRepository>();
 builder.Services.AddScoped<IPhysioService, PhysioService>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
+builder.Services.AddScoped<ITreatmentService, TreatmentService>();
 
 var connectionString = builder.Configuration.GetConnectionString("ServerDB_localhost");
 
@@ -24,7 +26,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (connectionString == "ServerDB_azure") 
+if (connectionString == "ServerDB_azure")
 {
     using (var scope = app.Services.CreateScope())
     {
