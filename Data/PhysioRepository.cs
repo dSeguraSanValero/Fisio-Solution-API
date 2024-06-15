@@ -7,6 +7,12 @@ public class PhysioRepository : IPhysioRepository
 {
     private Dictionary<string, Physio> _physios = new Dictionary<string, Physio>();
     private readonly string _filePath = "physios.json";
+    private readonly MigrationDbContext _context;
+
+    public PhysioRepository(MigrationDbContext context)
+    {
+        _context = context;
+    }    
 
     public PhysioRepository()
     {
@@ -53,9 +59,26 @@ public class PhysioRepository : IPhysioRepository
     }
 
 
-    public Dictionary<string, Physio> GetAllPhysios()
+    public Dictionary<int, Physio> GetAllPhysios(int? registrationNumber, bool? availeable, decimal? price)
     {
-        return new Dictionary<string, Physio>(_physios);
+        var query = _context.Physios.AsQueryable();
+
+        if (registrationNumber.HasValue)
+        {
+            query = query.Where(p => p.RegistrationNumber == registrationNumber);
+        }
+
+        if (availeable.HasValue)
+        {
+            query = query.Where(p => p.Availeable == availeable.Value);
+        }
+
+        if (price.HasValue)
+        {
+            query = query.Where(p => p.Price == price.Value);
+        }
+
+        return query.ToDictionary(p => p.PhysioId, p => p);
     }
 
     public void SaveChanges()

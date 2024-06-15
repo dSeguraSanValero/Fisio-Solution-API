@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
-using FisioSolution.Data;
 using FisioSolution.Business;
 using FisioSolution.Models;
-using System;
 
 namespace FisioSolution.API.Controllers;
 
@@ -11,17 +8,15 @@ namespace FisioSolution.API.Controllers;
 [Route("[controller]")]
 public class PatientController : ControllerBase
 {
-    private readonly MigrationDbContext _context;
 
     private readonly ILogger<PatientController> _logger;
 
     private readonly IPatientService _patientService;
 
-    public PatientController(ILogger<PatientController> logger, IPatientService patientService, MigrationDbContext context)
+    public PatientController(ILogger<PatientController> logger, IPatientService patientService)
     {
         _logger = logger;
         _patientService = patientService;
-        _context = context;
     }
 
 

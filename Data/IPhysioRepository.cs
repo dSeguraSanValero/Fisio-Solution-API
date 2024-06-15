@@ -6,5 +6,5 @@ public interface IPhysioRepository
     void AddPhysio(Physio physio);
     void SaveChanges();
     Physio GetPhysio(int stringRegisterNumber);
-    Dictionary<string, Physio> GetAllPhysios();
+    public Dictionary<int, Physio> GetAllPhysios(int? registrationNumber, bool? availeable, decimal? price);
 }
