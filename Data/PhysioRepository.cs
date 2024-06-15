@@ -1,5 +1,4 @@
 ﻿using FisioSolution.Models;
-using System.Text.Json;
 
 namespace FisioSolution.Data;
 
@@ -13,28 +12,7 @@ public class PhysioRepository : IPhysioRepository
     }    
 
 
-    public void AddPhysio(Physio physio)
-    {
-        _context.Physios.Add(physio);
-        _context.SaveChanges();
-    }
-
-
-    public void RemovePhysio(Physio physio)
-    {
-        _context.Physios.Remove(physio);
-        _context.SaveChanges();
-    }
-
-
-    public void UpdatePhysioDetails(Physio physio)
-    {
-        _context.Physios.Update(physio);
-        _context.SaveChanges();
-    }
-
-
-    public IEnumerable<Physio> GetAllPhysios(int? registrationNumber, bool? availeable, decimal? price, string? sortBy)
+    public IEnumerable<Physio> GetAllPhysios(int? registrationNumber, bool? availeable, decimal? price, string? sortBy, string? sortOrder)
     {
         var query = _context.Physios.AsQueryable();
 
@@ -58,11 +36,26 @@ public class PhysioRepository : IPhysioRepository
             switch (sortBy.ToLower())
             {
                 case "price":
-                    query = query.OrderBy(p => p.Price);
+                    if (!string.IsNullOrEmpty(sortOrder) && sortOrder.ToLower() == "desc")
+                    {
+                        query = query.OrderByDescending(p => p.Price);
+                    }
+                    else
+                    {
+                        query = query.OrderBy(p => p.Price);
+                    }
                     break;
-                    
+
+                case "physioid":
                 default:
-                    query = query.OrderBy(p => p.PhysioId);
+                    if (!string.IsNullOrEmpty(sortOrder) && sortOrder.ToLower() == "desc")
+                    {
+                        query = query.OrderByDescending(p => p.PhysioId);
+                    }
+                    else
+                    {
+                        query = query.OrderBy(p => p.PhysioId);
+                    }
                     break;
             }
         }
@@ -71,6 +64,25 @@ public class PhysioRepository : IPhysioRepository
     }
 
 
+    public void AddPhysio(Physio physio)
+    {
+        _context.Physios.Add(physio);
+        _context.SaveChanges();
+    }
+
+
+    public void UpdatePhysioDetails(Physio physio)
+    {
+        _context.Physios.Update(physio);
+        _context.SaveChanges();
+    }
+
+
+    public void RemovePhysio(Physio physio)
+    {
+        _context.Physios.Remove(physio);
+        _context.SaveChanges();
+    }
 }
 
 

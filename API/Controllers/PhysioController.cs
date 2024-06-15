@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using FisioSolution.Data;
 using FisioSolution.Models;
 using FisioSolution.Business;
 
+
 namespace FisioSolution.API.Controllers;
+
 
 [ApiController]
 [Route("[controller]")]
 public class PhysioController : ControllerBase
 {
-
     private readonly ILogger<PhysioController> _logger;
 
     private readonly IPhysioService _physioService;
@@ -20,10 +20,11 @@ public class PhysioController : ControllerBase
         _physioService = physioService;
     }
 
+
     [HttpGet(Name = "GetAllPhysios")]
-    public ActionResult<IEnumerable<Physio>> SearchPhysio(int? registrationNumber, bool? availeable, decimal? price, string? sortBy)
+    public ActionResult<IEnumerable<Physio>> SearchPhysio(int? registrationNumber, bool? availeable, decimal? price, string? sortBy, string? sortOrder)
     {
-        var physios = _physioService.GetPhysios(registrationNumber, availeable, price, sortBy);
+        var physios = _physioService.GetPhysios(registrationNumber, availeable, price, sortBy, sortOrder);
 
         if (physios.ToList().Count == 0)
         {
@@ -35,12 +36,12 @@ public class PhysioController : ControllerBase
 
 
     [HttpGet("{PhysioId}", Name = "GetPhysio")]
-    public IActionResult GetPhysio(int physioId)
+    public IActionResult GetPhysio(int PhysioId)
     {
         try
         {
-            var physios = _physioService.GetPhysios(null, null, null, null);
-            var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
+            var physios = _physioService.GetPhysios(null, null, null, null, null);
+            var physio = physios.FirstOrDefault(p => p.PhysioId == PhysioId);
 
             if (physio == null)
             {
@@ -51,7 +52,7 @@ public class PhysioController : ControllerBase
         }
         catch (KeyNotFoundException)
         {
-            return NotFound("No se encontró el fisioterapeuta con número de registro " + physioId);
+            return NotFound("No se encontró el fisioterapeuta con número de registro " + PhysioId);
         }
     }
 
@@ -85,41 +86,12 @@ public class PhysioController : ControllerBase
     }
 
 
-    [HttpDelete("{physioId}")]
-    public IActionResult DeletePhysioById(int physioId)
-    {
-        try
-        {
-            var physios = _physioService.GetPhysios(null, null, null, null);
-            var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
-
-            if (physio == null)
-            {
-                return NotFound();
-            }
-
-            _physioService.DeletePhysio(physio);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogInformation(ex.Message);
-            return NotFound();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al eliminar el fisioterapeuta.");
-            return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
-        }
-    }
-
-
     [HttpPut("{physioId}")]
     public IActionResult UpdatePhysio(int physioId, [FromBody] UpdatePhysioDTO physioDTO)
     {
         try
         {
-            var physios = _physioService.GetPhysios(null, null, null, null);
+            var physios = _physioService.GetPhysios(null, null, null, null, null);
             var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
 
             if (physio == null)
@@ -145,6 +117,35 @@ public class PhysioController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al actualizar el fisioterapeuta.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
+        }
+    }
+
+
+    [HttpDelete("{physioId}")]
+    public IActionResult DeletePhysioById(int physioId)
+    {
+        try
+        {
+            var physios = _physioService.GetPhysios(null, null, null, null, null);
+            var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
+
+            if (physio == null)
+            {
+                return NotFound();
+            }
+
+            _physioService.DeletePhysio(physio);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogInformation(ex.Message);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al eliminar el fisioterapeuta.");
             return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
         }
     }

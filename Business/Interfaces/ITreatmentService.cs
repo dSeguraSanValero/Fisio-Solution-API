@@ -4,7 +4,7 @@ namespace FisioSolution.Business;
 
 public interface ITreatmentService
 {
+    public IEnumerable<Treatment> GetTreatments(int? physioId, int? patientId);
     public void RegisterTreatment(int physioId, int patientId, string treatmentCause, DateTime treatmentDate, bool moreSessionsNeeded);
     public void DeleteTreatment(Treatment treatment);
-    public Dictionary<int, Treatment> GetTreatments(int? physioId, int? patientId);
 }

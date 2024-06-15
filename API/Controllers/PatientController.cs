@@ -2,13 +2,15 @@ using Microsoft.AspNetCore.Mvc;
 using FisioSolution.Business;
 using FisioSolution.Models;
 
+
+
 namespace FisioSolution.API.Controllers;
+
 
 [ApiController]
 [Route("[controller]")]
 public class PatientController : ControllerBase
 {
-
     private readonly ILogger<PatientController> _logger;
 
     private readonly IPatientService _patientService;
@@ -20,48 +22,45 @@ public class PatientController : ControllerBase
     }
 
 
-
     [HttpGet(Name = "GetAllPatients")]
-    public ActionResult<Dictionary<int, object>> SearchPatient(string? dni, bool? insurance)
+    public ActionResult<IEnumerable<Patient>> SearchPatient(string? dni, bool? insurance)
     {
         var patients = _patientService.GetPatients(dni, insurance);
 
-        if (patients.Count == 0)
+        if (!patients.Any())
         {
             return NotFound();
         }
 
-        var transformedPatients = patients.ToDictionary(
-            kvp => kvp.Key,
-            kvp => new
+        var transformedPatients = patients.Select(
+            p => new
             {
-                kvp.Value.PatientId,
-                kvp.Value.Name,
-                kvp.Value.Dni,
-                kvp.Value.Password,
-                BirthDate = kvp.Value.BirthDate.ToString("yyyy-MM-dd"),
-                kvp.Value.Weight,
-                kvp.Value.Height,
-                kvp.Value.Insurance
+                p.PatientId,
+                p.Name,
+                p.Dni,
+                p.Password,
+                BirthDate = p.BirthDate.ToString("yyyy-MM-dd"),
+                p.Weight,
+                p.Height,
+                p.Insurance
             }
         );
 
         return Ok(transformedPatients);
     }
 
-
-
+    
     [HttpGet("{PatientId}", Name = "GetPatient")]
     public IActionResult GetPatient(int PatientId)
     {
         try
         {
             var patients = _patientService.GetPatients(null, null);
-            var patient = patients.FirstOrDefault(p => p.Value.PatientId == PatientId).Value;
+            var patient = patients.FirstOrDefault(p => p.PatientId == PatientId);
 
             if (patient == null)
             {
-                return NotFound();
+                return NotFound("No se encontró el paciente con número de registro " + PatientId);
             }
 
             var transformedPatient = new
@@ -69,18 +68,17 @@ public class PatientController : ControllerBase
                 patient.PatientId,
                 patient.Name,
                 patient.Dni,
-                patient.Password,
                 BirthDate = patient.BirthDate.ToString("yyyy-MM-dd"),
                 patient.Weight,
                 patient.Height,
                 patient.Insurance
-            };           
+            };
 
-            return Ok(patient);
+            return Ok(transformedPatient);
         }
-        catch (KeyNotFoundException)
+        catch (Exception ex)
         {
-            return NotFound("No se encontró el paciente con número de registro " + PatientId);
+            return StatusCode(500, $"Ha ocurrido un error: {ex.Message}");
         }
     }
 
@@ -120,7 +118,7 @@ public class PatientController : ControllerBase
         try
         {
             var patients = _patientService.GetPatients(null, null);
-            var patient = patients.FirstOrDefault(p => p.Value.PatientId == patientId).Value;
+            var patient = patients.FirstOrDefault(p => p.PatientId == patientId);
 
             if (patient == null)
             {
@@ -144,7 +142,7 @@ public class PatientController : ControllerBase
         try
         {
             var patients = _patientService.GetPatients(null, null);
-            var patient = patients.FirstOrDefault(p => p.Value.PatientId == patientId).Value;
+            var patient = patients.FirstOrDefault(p => p.PatientId == patientId);
 
             if (patient == null)
             {

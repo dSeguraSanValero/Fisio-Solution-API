@@ -15,6 +15,25 @@ public class PatientRepository : IPatientRepository
     }
 
 
+    public IEnumerable<Patient> GetAllPatients(string? dni = null, bool? insurance = null)
+    {
+        var query = _context.Patients.AsQueryable();
+
+        if (!string.IsNullOrEmpty(dni))
+        {
+            query = query.Where(p => p.Dni == dni);
+        }
+
+        if (insurance.HasValue)
+        {
+            query = query.Where(p => p.Insurance == insurance.Value);
+        }
+
+        return query.ToList();
+    }
+
+
+
     public void AddPatient(Patient patient)
     {
         _context.Patients.Add(patient);
@@ -33,23 +52,5 @@ public class PatientRepository : IPatientRepository
     {
         _context.Patients.Update(patient);
         _context.SaveChanges();
-    }
-
-
-    public Dictionary<int, Patient> GetPatients(string? dni = null, bool? insurance = null)
-    {
-        var query = _context.Patients.AsQueryable();
-
-        if (!string.IsNullOrEmpty(dni))
-        {
-            query = query.Where(p => p.Dni == dni);
-        }
-
-        if (insurance.HasValue)
-        {
-            query = query.Where(p => p.Insurance == insurance.Value);
-        }
-
-        return query.ToDictionary(p => p.PatientId, p => p);
     }
 }

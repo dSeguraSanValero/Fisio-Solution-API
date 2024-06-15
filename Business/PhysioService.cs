@@ -3,14 +3,21 @@ using FisioSolution.Models;
 
 
 namespace FisioSolution.Business;
+
+
 public class PhysioService : IPhysioService
 {
-
     private readonly IPhysioRepository _repository;
 
     public PhysioService(IPhysioRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+
+
+    public IEnumerable<Physio> GetPhysios(int? registrationNumber, bool? availeable, decimal? price, string? sortBy, string? sortOrder)
+    {
+        return _repository.GetAllPhysios(registrationNumber, availeable, price, sortBy, sortOrder);
     }
 
 
@@ -48,10 +55,4 @@ public class PhysioService : IPhysioService
 
         _repository.UpdatePhysioDetails(physio);
     }
-
-    
-    public IEnumerable<Physio> GetPhysios(int? registrationNumber, bool? availeable, decimal? price, string? sortBy)
-    {
-        return _repository.GetAllPhysios(registrationNumber, availeable, price, sortBy);
-    }
-    }
+}

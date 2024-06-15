@@ -12,6 +12,13 @@ public class PatientService : IPatientService
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
+
+    public IEnumerable<Patient> GetPatients(string? dni = null, bool? insurance = null)
+    {
+        return _repository.GetAllPatients(dni, insurance);
+    }
+
+
     public void RegisterPatient(string name, string dni, string password, DateTime birthDate, decimal weight, decimal height, bool insurance)
     {
 
@@ -35,6 +42,7 @@ public class PatientService : IPatientService
         _repository.RemovePatient(patient);
     }
 
+
     public void UpdatePatient(Patient patient, string password, decimal weight, decimal height, bool insurance)
     {
         patient.Password = password;
@@ -44,10 +52,4 @@ public class PatientService : IPatientService
 
         _repository.UpdatePatientDetails(patient);
     }
-
-    public Dictionary<int, Patient> GetPatients(string? dni = null, bool? insurance = null)
-    {
-        return _repository.GetPatients(dni, insurance);
-    }
-
 }

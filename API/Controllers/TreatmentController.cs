@@ -22,30 +22,28 @@ public class TreatmentController : ControllerBase
 
 
     [HttpGet(Name = "GetAllTreatments")]
-    public ActionResult<Dictionary<int, Treatment>> SearchTreatment(int? physioId, int? patientId)
+    public ActionResult<IEnumerable<object>> SearchTreatment(int? physioId, int? patientId)
     {
         var treatments = _treatmentService.GetTreatments(physioId, patientId);
 
-        if (treatments.Count == 0)
+        if (!treatments.Any())
         {
             return NotFound();
         }
 
-        var transformedTreatments = treatments.ToDictionary(
-            kvp => kvp.Key,
-            kvp => new
-            {
-                kvp.Value.TreatmentId,
-                kvp.Value.PatientId,
-                kvp.Value.PhysioId,
-                kvp.Value.TreatmentCause,
-                TreatmentDate = kvp.Value.TreatmentDate.ToString("yyyy-MM-dd"),
-                kvp.Value.MoreSessionsNeeded
-            }
-        );
+        var transformedTreatments = treatments.Select(p => new
+        {
+            p.TreatmentId,
+            p.PatientId,
+            p.PhysioId,
+            p.TreatmentCause,
+            TreatmentDate = p.TreatmentDate.ToString("yyyy-MM-dd"),
+            p.MoreSessionsNeeded,
+        });
 
         return Ok(transformedTreatments);
     }
+
 
 
     [HttpGet("{TreatmentId}", Name = "GetTreatment")]
@@ -54,7 +52,7 @@ public class TreatmentController : ControllerBase
         try
         {
             var treatments = _treatmentService.GetTreatments(null, null);
-            var treatment = treatments.FirstOrDefault(p => p.Value.TreatmentId == TreatmentId).Value;
+            var treatment = treatments.FirstOrDefault(p => p.TreatmentId == TreatmentId);
 
             if (treatment == null)
             {
@@ -113,7 +111,8 @@ public class TreatmentController : ControllerBase
         try
         {
             var treatments = _treatmentService.GetTreatments(null, null);
-            var treatment = treatments.FirstOrDefault(p => p.Value.TreatmentId == treatmentId).Value;
+            var treatment = treatments.FirstOrDefault(p => p.TreatmentId == treatmentId);
+
 
             if (treatment == null)
             {
