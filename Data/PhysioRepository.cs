@@ -42,7 +42,8 @@ public class PhysioRepository : IPhysioRepository
 
     public void AddPhysio(Physio physio)
     {
-        _physios[physio.PhysioId.ToString()] = physio;
+        _context.Physios.Add(physio);
+        _context.SaveChanges();
     }
 
     
@@ -81,6 +82,12 @@ public class PhysioRepository : IPhysioRepository
         return query.ToDictionary(p => p.PhysioId, p => p);
     }
 
+    public void RemovePhysio(Physio physio)
+    {
+        _context.Physios.Remove(physio);
+        _context.SaveChanges();
+    }
+
     public void SaveChanges()
     {
         try
@@ -94,6 +101,13 @@ public class PhysioRepository : IPhysioRepository
             throw new Exception("Ha ocurrido un error al guardar cambios en el archivo de usuarios", e);
         }
     }
+
+    public void UpdatePhysioDetails(Physio physio)
+    {
+        _context.Physios.Update(physio);
+        _context.SaveChanges();
+    }
+
 }
 
 

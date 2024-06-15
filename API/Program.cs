@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using FisioSolution.Business;
 using FisioSolution.Data;
-using FisioSolution.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

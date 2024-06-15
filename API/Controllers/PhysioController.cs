@@ -36,27 +36,118 @@ public class PhysioController : ControllerBase
     }
 
 
-    [HttpDelete("{PhysioId}")]
-    public IActionResult DeletePhysio(int PhysioId)
+    [HttpGet("{PhysioId}", Name = "GetPhysio")]
+    public IActionResult GetPhysio(int PhysioId)
     {
-        var physio = _context.Physios.FirstOrDefault(p => p.PhysioId == PhysioId);
-
-        if (physio == null)
+        try
         {
-            return NotFound();
+            var physios = _physioService.GetPhysios(null, null, null);
+            var physio = physios.FirstOrDefault(p => p.Value.PhysioId == PhysioId).Value;
+
+            if (physio == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(physio);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound("No se encontró el fisioterapeuta con número de registro " + PhysioId);
+        }
+    }
+
+
+    [HttpPost]
+    public IActionResult RegisterPhysio([FromBody] RegisterPhysioDTO physioDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
         }
 
         try
         {
-            _context.Physios.Remove(physio);
-            _context.SaveChanges();
+            _physioService.RegisterPhysio(
+                name: physioDTO.Name,
+                registrationNumber: physioDTO.RegistrationNumber,
+                password: physioDTO.Password,
+                availeable: physioDTO.Availeable,
+                openingTime: physioDTO.OpeningTime,
+                closingTime: physioDTO.ClosingTime,
+                price: physioDTO.Price
+            );
 
-            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:5173");
-            return NoContent();
+            return CreatedAtAction(nameof(SearchPhysio), new { registrationNumber = physioDTO.RegistrationNumber }, physioDTO);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+    [HttpDelete("{physioId}")]
+    public IActionResult DeletePhysioById(int physioId)
+    {
+        try
+        {
+            var physios = _physioService.GetPhysios(null, null, null);
+            var physio = physios.FirstOrDefault(p => p.Value.PhysioId == physioId).Value;
+
+            if (physio == null)
+            {
+                return NotFound();
+            }
+
+            _physioService.DeletePhysio(physio);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogInformation(ex.Message);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al eliminar el fisioterapeuta.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
+        }
+    }
+
+
+    [HttpPut("{physioId}")]
+    public IActionResult UpdatePhysio(int physioId, [FromBody] UpdatePhysioDTO physioDTO)
+    {
+        try
+        {
+            var physios = _physioService.GetPhysios(null, null, null);
+            var physio = physios.FirstOrDefault(p => p.Value.PhysioId == physioId).Value;
+
+            if (physio == null)
+            {
+                return NotFound();
+            }
+
+            _physioService.UpdatePhysio(physio,
+                password: physioDTO.Password,
+                availeable: physioDTO.Availeable,
+                openingTime: physioDTO.OpeningTime,
+                closingTime: physioDTO.ClosingTime,
+                price: physioDTO.Price
+            );
+
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogInformation(ex.Message);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar el fisioterapeuta.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
         }
     }
 }

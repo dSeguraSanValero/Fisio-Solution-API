@@ -18,21 +18,22 @@ public class PhysioService : IPhysioService
         return _repository.GetAllPhysios(registrationNumber, availeable, price);
     }
 
-    public void RegisterPhysio(string name, int registrationNumber, string password, bool availeable, TimeSpan horaApertura, TimeSpan horaCierre, decimal price)
+    public void RegisterPhysio(string name, int registrationNumber, string password, bool availeable, TimeSpan openingTime, TimeSpan closingTime, decimal price)
     {
-        try 
+
+        var newPhysio = new Physio
         {
-            Physio physio = new(name, registrationNumber, password, availeable, horaApertura, horaCierre, price);
-            _repository.AddPhysio(physio);
-            _repository.SaveChanges();
-        } 
-        catch (Exception e)
-        {
-            throw new Exception("Ha ocurrido un error al registrar el usuario", e);
-        }
+            Name = name,
+            RegistrationNumber = registrationNumber,
+            Password = password,
+            Availeable = availeable,
+            OpeningTime = openingTime,
+            ClosingTime = closingTime,
+            Price = price
+        };
+
+        _repository.AddPhysio(newPhysio);
     }
-
-
 
 
     public void UpdatePhysioTreatments(Physio physio, List<Treatment> treatments)
@@ -49,4 +50,20 @@ public class PhysioService : IPhysioService
     }
 
 
+    public void DeletePhysio(Physio physio)
+    {
+        _repository.RemovePhysio(physio);
+    }
+
+
+    public void UpdatePhysio(Physio physio, string password, TimeSpan openingTime, TimeSpan closingTime, bool availeable, decimal price)
+    {
+        physio.Password = password;
+        physio.OpeningTime = openingTime;
+        physio.ClosingTime = closingTime;
+        physio.Availeable = availeable;
+        physio.Price = price;
+
+        _repository.UpdatePhysioDetails(physio);
+    }
 }
