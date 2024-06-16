@@ -13,7 +13,7 @@ builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<ITreatmentService, TreatmentService>();
 
-var connectionString = builder.Configuration.GetConnectionString("ServerDB_localhost");
+var connectionString = builder.Configuration.GetConnectionString("ServerDB_azure");
 
 builder.Services.AddDbContext<FisioSolutionContext>(options =>
     options.UseSqlServer(connectionString)
@@ -39,15 +39,14 @@ options.AddPolicy("MyAllowedOrigins",
 
 var app = builder.Build();
 
-if (connectionString == "ServerDB_azure")
+
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        var context = services.GetRequiredService<FisioSolutionContext>();
-        context.Database.Migrate();
-    }
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<FisioSolutionContext>();
+    context.Database.Migrate();
 }
+
 
 app.UseCors("MyAllowedOrigins");
 
